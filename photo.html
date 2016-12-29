@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        body{
+            background:#000;
+        }
+        .perspective{
+            perspective: 800px;
+        }
+        .box{
+            width: 120px;
+            height: 180px;
+            margin: auto;
+            /*border:1px solid green;*/
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-15deg);
+
+        }
+        .box img{
+            position: absolute;
+            left:0;
+            top:0;
+            box-shadow: 0 0 1em green;
+            border-radius: 4px;
+            -webkit-box-reflect:below 10px -webkit-linear-gradient(rgba(0,128,0,0) 40%,rgba(0,128,0,0.5));
+            transform: rotateY(0deg) translateZ(0px);
+            /*transition:  2s;*/
+        }
+        .box p{
+            width: 1200px;
+            height: 1200px;
+            background: -webkit-radial-gradient(rgba(242,79,242,0.4),rgba(0,0,0,0));
+            border-radius: 50%;
+            position: absolute;
+            left:50%;
+            top:50%;
+            transform: translate(-50%,-40.5%) rotateX(90deg) ;
+
+        }
+    </style>
+</head>
+<body>
+<div class="perspective">
+    <div class="box">
+        <img src="img/1.jpg" alt=""/>
+        <img src="img/2.jpg" alt=""/>
+        <img src="img/3.jpg" alt=""/>
+        <img src="img/4.jpg" alt=""/>
+        <img src="img/5.jpg" alt=""/>
+        <img src="img/6.jpg" alt=""/>
+        <img src="img/7.jpg" alt=""/>
+        <img src="img/8.jpg" alt=""/>
+        <img src="img/9.jpg" alt=""/>
+        <img src="img/10.jpg" alt=""/>
+        <img src="img/11.jpg" alt=""/>
+        <p></p>
+    </div>
+</div>
+
+<script>
+    window.onload=function(){
+        var box=document.querySelector(".box");
+        var imgs=document.querySelectorAll("img");
+        var r=360/imgs.length;
+        var timer=null;
+        var nowx,nowY,lastX,lastY,minusX,minusY,rotX= -15,rotY=0;
+        for(var i=0;i<imgs.length;i++){
+            imgs[i].style.transform="rotateY("+i*r+"deg) translateZ(300px)";
+            imgs[i].style.transition="transform 1s "+(imgs.length-1-i)*0.4+"s"
+        }
+
+        mTop();
+        window.onresize = mTop;
+        function mTop(){
+            var wH = window.innerHeight;
+            box.style.marginTop = ""+wH/2-180+"px";
+        };
+
+        document.onmousedown=function(e){
+            var e=e||event;
+            e.preventDefault();
+            lastX= e.pageX;
+            lastY= e.pageY;
+            document.onmousemove=function(e){
+                var e=e||event;
+                clearInterval(timer);
+                nowx= e.pageX;
+                nowY= e.pageY;
+                minusX=nowx- lastX;
+                minusY=nowY-lastY;
+                rotX-=minusY*0.2;
+                rotY+= minusX*0.2;
+                box.style.transform="rotateX("+rotX+"deg) rotateY("+rotY+"deg)";
+                lastX=nowx;
+                lastY=nowY;
+
+            }
+            document.onmouseup=function(){
+                this.onmouseup=null;
+                this.onmousemove=null;
+                timer=setInterval(function(){
+                    minusX*=0.95;
+                    minusY*=0.95;
+                    rotX-=minusY*0.2;
+                    rotY+= minusX*0.2;
+                    if(Math.abs(minusX)<0.5&&Math.abs(minusY)<0.5){
+                        clearInterval(timer);
+                    }
+                    box.style.transform="rotateX("+rotX+"deg) rotateY("+rotY+"deg)";
+                },50)
+
+            }
+//        return false;
+        }
+
+    }
+
+</script>
+</body>
+</html>
